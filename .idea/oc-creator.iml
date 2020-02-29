@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/EA/generated" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/EA/simulation" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/EA/base" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/WorkingDir" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
