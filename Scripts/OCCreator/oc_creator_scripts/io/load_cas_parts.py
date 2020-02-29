@@ -81,12 +81,12 @@ class Species:
 
 OCCCasPartDataMappings: Dict[str, Dict[str, List[str]]] = {
     OCCAgeGenderIdentifiers.TODDLER_HUMAN_MALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.MALE, ],
         'available_for_ages': [Age.TODDLER, ],
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.TODDLER_HUMAN_FEMALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.FEMALE, ],
         'available_for_ages': [Age.TODDLER, ],
         'available_for_species': [Species.HUMAN, ]
     },
@@ -96,12 +96,12 @@ OCCCasPartDataMappings: Dict[str, Dict[str, List[str]]] = {
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.CHILD_HUMAN_MALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.MALE, ],
         'available_for_ages': [Age.CHILD, ],
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.CHILD_HUMAN_FEMALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.FEMALE, ],
         'available_for_ages': [Age.CHILD, ],
         'available_for_species': [Species.HUMAN, ]
     },
@@ -111,12 +111,12 @@ OCCCasPartDataMappings: Dict[str, Dict[str, List[str]]] = {
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.TEEN_HUMAN_MALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.MALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.TEEN_HUMAN_FEMALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.FEMALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
@@ -126,12 +126,12 @@ OCCCasPartDataMappings: Dict[str, Dict[str, List[str]]] = {
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.YOUNG_ADULT_HUMAN_MALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.MALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.YOUNG_ADULT_HUMAN_FEMALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.FEMALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
@@ -141,12 +141,12 @@ OCCCasPartDataMappings: Dict[str, Dict[str, List[str]]] = {
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.ADULT_HUMAN_MALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.MALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.ADULT_HUMAN_FEMALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.FEMALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
@@ -156,12 +156,12 @@ OCCCasPartDataMappings: Dict[str, Dict[str, List[str]]] = {
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.ELDER_HUMAN_MALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.MALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
     OCCAgeGenderIdentifiers.ELDER_HUMAN_FEMALE: {
-        'available_for_genders': [Gender.MALE, Gender.FEMALE],
+        'available_for_genders': [Gender.FEMALE, ],
         'available_for_ages': [Age.TEEN, Age.YOUNG_ADULT, Age.ADULT, Age.ELDER],
         'available_for_species': [Species.HUMAN, ]
     },
@@ -283,6 +283,9 @@ class OCCCASPartData:
         )
 
 
+EXCLUDE_PARTS = ['nude', 'bathing']
+
+
 class OCCCASPartSnippetCollection:
     def __init__(
         self,
@@ -345,34 +348,29 @@ class TuningTypes:
 class OCCCasPartLoader:
     @staticmethod
     def load_cas_parts(file_path: str='.') -> Tuple[OCCCASPartSnippetCollection]:
-        global OCCCasPartDataMappings
+        global OCCCasPartDataMappings, EXCLUDE_PARTS
         print('doing')
         collections: Dict[str, OCCCASPartSnippetCollection] = dict()
 
+        image_data = dict()
         cas_part_file_names: List[str] = []
-        cas_part_thumbnail_names: List[str] = []
 
-        print(file_path)
         file_names = [f for f in os.listdir('.') if os.path.isfile(f)]
         if len(file_names) == 0:
             print('No files found at path.')
         for file_name in file_names:
-            print(file_name)
             if file_name.endswith('.CASPartThumbnail.png'):
-                cas_part_thumbnail_names.append(file_name)
+                (resource_type, resource_group, resource_identifier) = OCCCasPartLoader.get_resource_key(file_name)
+                image_data[resource_identifier] = file_name
                 continue
             if file_name.endswith('.CASPart'):
                 cas_part_file_names.append(file_name)
                 continue
 
-        image_data = dict()
-
-        for cas_part_thumbnail_name in cas_part_thumbnail_names:
-            (resource_type, resource_group, resource_identifier) = OCCCasPartLoader.get_resource_key(cas_part_thumbnail_name)
-            image_data[resource_identifier] = cas_part_thumbnail_name
-
         for cas_part_file_name in cas_part_file_names:
             (resource_type, resource_group, resource_identifier, cas_part_age_genders_identifier, cas_part_name, tags) = OCCCasPartLoader.get_cas_part_identifiers(cas_part_file_name)
+            if not cas_part_name or cas_part_name.lower() in EXCLUDE_PARTS:
+                continue
             data_mapping = OCCCasPartDataMappings[cas_part_age_genders_identifier]
             cas_part_thumbnail_resource_key = FNVConvert.fnv64('CN_OC_Vanilla_Image_' + cas_part_name)
             dst_image_hex_key = hex(cas_part_thumbnail_resource_key)
@@ -428,11 +426,11 @@ class OCCCasPartLoader:
         return resource_type, resource_group, resource_identifier, cas_part_age_genders_identifier, cas_part_name[len(tag + '_'):], (tag,)
 
     @staticmethod
-    def resize_image(input_file_name: str, output_file_name: str, new_width: int=56):
+    def resize_image(input_file_name: str, output_file_name: str, new_width: int=56, new_height: int=56):
         img = Image.open(input_file_name)
         width_percent = (new_width / float(img.size[0]))
         height_size = int((float(img.size[1]) * float(width_percent)))
-        img = img.resize((new_width, height_size), PIL.Image.ANTIALIAS)
+        img = img.resize((new_width, new_height), PIL.Image.ANTIALIAS)
         img.save(output_file_name)
         img.close()
 
@@ -463,8 +461,9 @@ class FNVConvert:
 
 
 loaded_collections = OCCCasPartLoader.load_cas_parts()
-
+print('writing snippets.')
 for loaded_collection in loaded_collections:
     f = open(os.path.join(loaded_collection.file_path, loaded_collection.file_name), "w+")
     f.write(str(loaded_collection))
     f.close()
+print('done writing snippets.')
