@@ -25,3 +25,4 @@ tunings
 **/*.xml___jb_old___
 Scripts/ScriptLibrary/sims4communitylib
 .idea/inspectionProfiles
+WorkingDir/**/*

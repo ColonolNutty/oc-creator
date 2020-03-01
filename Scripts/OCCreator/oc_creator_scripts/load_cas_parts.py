@@ -475,7 +475,7 @@ else:
     print('Writing snippets.')
     for loaded_collection in loaded_collections:
         path = os.path.join(loaded_collection.file_path, loaded_collection.file_name)
-        print('Creating snippet file for \'{}\''.format(path))
+        print('Creating snippet file for \'{}\' Part Count: {}'.format(path, len(loaded_collection.cas_parts)))
         f = open(path, "w+")
         f.write(str(loaded_collection))
         f.close()
